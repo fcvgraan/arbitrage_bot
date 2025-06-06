@@ -36,7 +36,7 @@ func main() {
 		log.Fatalf("Error fetching ticker: %v", err)
 	}
 	fmt.Printf("Ticker XBTZAR: Bid=%s, Ask=%s, Last=%s\n",
-		tickerResp.Bid, tickerResp.Ask, tickerResp.Last)
+		tickerResp.Bid, tickerResp.Ask, tickerResp.LastTrade)
 
 	// Example: Get your account balances (private endpoint)
 	balances, err := luno.GetBalances()
