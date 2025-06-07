@@ -1,9 +1,10 @@
 package luno
 
-// OrderBookResponse is Luno's raw JSON for the BTC/ZAR orderbook.
+// OrderBookResponse represents Luno's order book JSON.
+// Bids/Asks are slices of [price, volume].
 type OrderBookResponse struct {
 	Pair      string     `json:"pair"`
 	Timestamp int64      `json:"timestamp"`
-	Bids      [][]string `json:"bids"` // each entry: [price, volume]
-	Asks      [][]string `json:"asks"` // each entry: [price, volume]
+	Bids      [][]string `json:"bids"` // [price, volume]
+	Asks      [][]string `json:"asks"` // [price, volume]
 }

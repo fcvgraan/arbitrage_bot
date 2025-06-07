@@ -1,16 +1,16 @@
 package valr
 
-// OrderBookEntry is one price‐level in VALR's book.
+// OrderBookEntry represents one level in VALR's book.
 type OrderBookEntry struct {
-	Price    string `json:"price"`    // e.g. "590000.00"
-	Quantity string `json:"quantity"` // e.g. "0.05"
+	Price    string `json:"price"`
+	Quantity string `json:"quantity"`
 }
 
-// OrderBookResponse is VALR's JSON for BTCZAR.
-// GET https://api.valr.com/api/v1/marketdata/BTCZAR/orderbook?full={true|false}
+// OrderBookResponse holds VALR's JSON book.
+// Bids sorted desc, Asks sorted asc.
 type OrderBookResponse struct {
 	Pair      string           `json:"pair"`
 	Timestamp int64            `json:"timestamp"`
-	Bids      []OrderBookEntry `json:"bids"` // sorted descending
-	Asks      []OrderBookEntry `json:"asks"` // sorted ascending
+	Bids      []OrderBookEntry `json:"bids"`
+	Asks      []OrderBookEntry `json:"asks"`
 }
