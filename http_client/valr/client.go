@@ -2,23 +2,35 @@ package valr
 
 import (
 	"fmt"
+	"net/http"
 
 	"github.com/go-resty/resty/v2"
 )
 
-const apiPrefix = "/api/v1/marketdata"
+// OrderBookResponse and OrderBookEntry in valr/types.go remain unchanged.
 
-// ValrClient wraps Resty for VALR's API.
-type ValrClient struct{ client *resty.Client }
+// ValrClient wraps a Resty client pre-configured for VALR.
+type ValrClient struct {
+	client *resty.Client
+}
 
-// NewValrClient initializes ValrClient (resty.BaseURL/auth already set).
-func NewValrClient(c *resty.Client) *ValrClient { return &ValrClient{client: c} }
+// NewValrClient expects a Resty client with BaseURL="https://api.valr.com" and BasicAuth set.
+func NewValrClient(rc *resty.Client) *ValrClient {
+	return &ValrClient{client: rc}
+}
 
-// GetOrderBook fetches top-of-book; full=false for top 40 entries.
-func (c *ValrClient) GetOrderBook(pair string, full bool) (*OrderBookResponse, error) {
-	r := new(OrderBookResponse)
-	req := c.client.R().SetResult(r).
-		SetQueryParam("full", fmt.Sprintf("%t", full))
-	_, err := req.Get(fmt.Sprintf("%s/%s/orderbook", apiPrefix, pair))
-	return r, err
+// GetOrderBook fetches the top 40 bids & asks via the public endpoint.
+// GET https://api.valr.com/v1/public/{pair}/orderbook
+func (c *ValrClient) GetOrderBook(pair string) (*OrderBookResponse, error) {
+	resp := new(OrderBookResponse)
+	res, err := c.client.R().
+		SetResult(resp).
+		Get(fmt.Sprintf("/v1/public/%s/orderbook", pair))
+	if err != nil {
+		return nil, err
+	}
+	if res.StatusCode() != http.StatusOK {
+		return nil, fmt.Errorf("VALR orderbook HTTP %d", res.StatusCode())
+	}
+	return resp, nil
 }
